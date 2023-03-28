@@ -1,32 +1,28 @@
-echo "Banchmarking Italian models on STS--B"
+#!/bin/bash
 
-model_name=dbmdz/electra-base-italian-mc4-cased-discriminator
-echo "Training model $model_name"
-python3 train.py --model_name $model_name --num_epochs 4 --output_path output/electra-mc4
+if [ -f "requirements.txt" ]; then
+    echo "Installing requirements"
+    pip3 install -r -q requirements.txt
+fi
 
-model_name=dbmdz/electra-base-italian-xxl-cased-discriminator
-echo "Training model $model_name"
-python3 train.py --model_name $model_name --num_epochs 4 --output_path output/electra-xxl
+models=(
+    "dbmdz/electra-base-italian-mc4-cased-discriminator"
+    "dbmdz/electra-base-italian-xxl-cased-discriminator"
+    "indigo-ai/BERTino"
+    "dbmdz/bert-base-italian-xxl-cased"
+    "dbmdz/bert-base-italian-xxl-uncased"
+    "Musixmatch/umberto-commoncrawl-cased-v1"
+    "Musixmatch/umberto-wikipedia-uncased-v1"
+)
 
-model_name=indigo-ai/BERTino
-echo "Training model $model_name"
-python3 train.py --model_name $model_name --num_epochs 4 --output_path output/bertino
 
-model_name=dbmdz/bert-base-italian-xxl-cased
-echo "Training model $model_name"
-python3 train.py --model_name $model_name --num_epochs 4 --output_path output/bert-xxl-cased
+echo "Banchmarking Italian models on STS-B"
 
-model_name=dbmdz/bert-base-italian-xxl-uncased
-echo "Training model $model_name"
-python3 train.py --model_name $model_name --num_epochs 4 --output_path output/bert-xxl-uncased
-
-model_name=Musixmatch/umberto-commoncrawl-cased-v1
-echo "Training model $model_name"
-python3 train.py --model_name $model_name --num_epochs 4 --output_path output/umberto-commoncrawl
-
-model_name=Musixmatch/umberto-wikipedia-uncased-v1
-echo "Training model $model_name"
-python3 train.py --model_name $model_name --num_epochs 4 --output_path output/umberto-wikipedia
+for model in "${models[@]}"
+do
+    echo "Training model $model"
+    python3 train.py --model_name "$model" --num_epochs 4 --output_path "output/$(echo $model | awk -F '/' '{print $NF}')"
+done
 
 python3 get_results.py --path output
 
