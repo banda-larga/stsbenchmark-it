@@ -1,0 +1,4 @@
+rich 
+click
+datasets
+sentence_transformers
