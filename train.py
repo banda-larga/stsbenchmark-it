@@ -8,7 +8,7 @@ from rich.logging import RichHandler
 import logging
 import click
 
-from torch
+import torch
 from torch.utils.data import DataLoader
 
 g = torch.Generator()
@@ -120,6 +120,7 @@ def main(model_name, dataset, train_batch_size, num_epochs, output_path):
     test_evaluator(model, output_path=output_path)
 
     model.save(output_path)
+
 
 if __name__ == "__main__":
     main()
