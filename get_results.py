@@ -1,7 +1,7 @@
 import click
 from pathlib import Path
 import pandas as pd
-from rich import RichHandler
+from rich.logging import RichHandler
 import logging
 
 logging.basicConfig(

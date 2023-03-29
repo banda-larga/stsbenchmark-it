@@ -2,7 +2,7 @@
 
 if [ -f "requirements.txt" ]; then
     echo "Installing requirements"
-    pip3 install -r -q requirements.txt
+    pip3 install -r requirements.txt
 fi
 
 models=(
