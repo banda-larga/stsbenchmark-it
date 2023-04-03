@@ -11,6 +11,8 @@ logging.basicConfig(
     handlers=[RichHandler()],
 )
 
+log = logging.getLogger("rich")
+
 
 @click.command()
 @click.option(
@@ -33,6 +35,8 @@ def main(path: str) -> None:
             )
     scores = scores.sort_values(by="avg", ascending=False)
     scores.to_csv("scores.csv", index=False)
+
+    log.info(scores)
 
 
 if __name__ == "__main__":

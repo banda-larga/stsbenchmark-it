@@ -15,6 +15,8 @@ logging.basicConfig(
     handlers=[RichHandler()],
 )
 
+log = logging.getLogger("rich")
+
 
 @click.command()
 @click.option(
@@ -29,7 +31,7 @@ def main(path):
     dataset = load_dataset("stsb_multi_mt", name="it")
     train_samples = dataset["train"].to_pandas()
     samples = train_samples[["sentence1", "sentence2"]].values.flatten().tolist()
-    logging.info(f"Loaded {len(samples)} samples")
+    log.info(f"Loaded {len(samples)} samples")
 
     for model in models:
         score = get_score(model, samples)
@@ -42,14 +44,14 @@ def main(path):
 
     scores = scores.sort_values(by="samples/sec", ascending=False)
     scores.to_csv("inference_scores.csv", index=False)
-    logging.info(f"Saved!")
+    log.info(f"Saved!")
 
 
 def get_score(model, samples):
     model = SentenceTransformer(model)
     model.to("cpu")
 
-    logging.info("Inference time on training set")
+    log.info("Inference time on training set")
 
     deltas = []
     for _ in range(10):
@@ -61,7 +63,7 @@ def get_score(model, samples):
     delta = sum(deltas) / len(deltas)
     samples_per_sec = len(samples) / delta
 
-    logging.info(f"Samples/sec: {samples_per_sec}")
+    log.info(f"Samples/sec: {samples_per_sec}")
     del model
     gc.collect()
     return samples_per_sec

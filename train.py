@@ -24,6 +24,8 @@ logging.basicConfig(
     handlers=[RichHandler()],
 )
 
+log = logging.getLogger("rich")
+
 
 def get_input_example(row):
     """Sentence pair and score from STSbenchmark HuggingFace dataset"""
@@ -85,7 +87,7 @@ def main(model_name, dataset, train_batch_size, num_epochs, output_path):
     pooling_model = models.Pooling(word_embedding_model.get_word_embedding_dimension())
     model = SentenceTransformer(modules=[word_embedding_model, pooling_model])
 
-    logging.info("Read STSbenchmark dataset")
+    log.info("Read STSbenchmark dataset")
     dataset = load_dataset(dataset, name="it")
     train_samples, dev_samples, test_samples = get_samples(dataset)
 
@@ -94,13 +96,13 @@ def main(model_name, dataset, train_batch_size, num_epochs, output_path):
     )
     train_loss = losses.CosineSimilarityLoss(model=model)
 
-    logging.info("Read STSbenchmark dev dataset")
+    log.info("Read STSbenchmark dev dataset")
     evaluator = EmbeddingSimilarityEvaluator.from_input_examples(
         dev_samples, name="sts-dev"
     )
 
     warmup_steps = math.ceil(len(train_dataloader) * num_epochs * 0.1)
-    logging.info("Warmup-steps: {}".format(warmup_steps))
+    log.info("Warmup-steps: {}".format(warmup_steps))
 
     # Train the model
     model.fit(
@@ -113,7 +115,6 @@ def main(model_name, dataset, train_batch_size, num_epochs, output_path):
         show_progress_bar=True,
     )
 
-    model = SentenceTransformer(output_path)
     test_evaluator = EmbeddingSimilarityEvaluator.from_input_examples(
         test_samples, name="sts-test"
     )
